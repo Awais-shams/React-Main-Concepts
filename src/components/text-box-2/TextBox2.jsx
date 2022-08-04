@@ -1,39 +1,51 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState,useReducer } from 'react'
 import { TextField,Box,Button, Grid,Typography,IconButton } from '@mui/material'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-const TextBox = () => {
 
-    const [value,setValue]=useState("")
-
-    const [list,setList]=useState([])
-
-    const fieldHandler=(e)=>{
-        console.log(e.target.value)
-        setValue(e.target.value)
-    }
+const TextBox2 = () => {
 
 
-    const addList=()=>{
+    const initialvalue={
+        inputValue:"",
+        list:[]
+    };
+
+    
+    const reducer=(state,action)=>{
+        switch(action.type){
+        case 'fieldHandler':
+            return {
+                ...state,
+                inputValue:action.payload
+            }
+        case 'add':
+            return {list: [...state.list,state.inputValue]}
+            default:
+                return null;
+            }
+        }
+        
+        const [add,dispatch]=useReducer(reducer,initialvalue)
+
+   
+    
+    console.log(add.list)
+    
+    // const addList=()=>{
+    //     setList([...list,value])
        
-        setList([...list,value])
+    // }
+    // console.log(list)
 
-       
-    }
-    console.log(list)
-
-    const deleteList=(idx)=>{
-      console.log(idx)
-      let arr=list
-      console.log(arr)
-      arr.splice(idx,1)
-      console.log(arr)
-      setList([...arr])
-    }
-
-  
+    // const deleteList=(idx)=>{
+    //   let arr=[...list]
+    //   arr.splice(idx,1)
+    //   setList(arr)
+    // }
+    
 
   return (
     <Box sx={{mt:2}}>
@@ -43,23 +55,23 @@ const TextBox = () => {
           <TextField
             id="standard-required"
             label="Add"
-            defaultValue={value}
+            defaultValue={add.inputValue}
             variant="outlined"
             type="text"
-            onChange={fieldHandler}
+            onChange={(e)=>dispatch({type:'fieldHandler',payload:e.target.value})}
             sx={{width:800}}
             placeholder="Enter your todo's list"
           />
         </Grid>
         <Grid item>
-        <Button variant="contained" type='button' onClick={addList}>Add</Button>
+        <Button variant="contained" type='button' onClick={()=>dispatch({type: 'add'})}>Add</Button>
         </Grid>
        </Grid>
 
         <Grid container justifyContent="center" alignItems="center">
         <Grid item>
                   {
-                    list?.map((todo,idx)=>{
+                    add.list.map((todo,idx)=>{
                       return <Box sx={{height:50,width:800,mt:2}}>
                           <Typography variant='h4' key={idx} gutterBottom>
                             <ArrowForwardIosIcon/>
@@ -67,9 +79,9 @@ const TextBox = () => {
                             `${idx}-${todo}`
                             }
 
-                          <IconButton onClick={()=>deleteList(todo,idx)}>
+                          {/* <IconButton onClick={()=>deleteList(todo,idx)}>
                             <DeleteForeverIcon/>
-                          </IconButton>
+                          </IconButton> */}
 
                           </Typography>
                           
@@ -84,4 +96,4 @@ const TextBox = () => {
   )
 }
 
-export default TextBox
+export default TextBox2
